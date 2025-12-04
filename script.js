@@ -1,38 +1,26 @@
-// script.js
+// Portfolio Website JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize theme
-    initTheme();
-    
-    // Initialize navigation
-    initNavigation();
-    
-    // Initialize smooth scrolling
-    initSmoothScrolling();
-    
-    // Initialize back to top button
+    // Initialize all features
+    initThemeToggle();
+    initMobileMenu();
+    initSmoothScroll();
+    initFormValidation();
+    initSkillAnimations();
     initBackToTop();
-    
-    // Initialize contact form
-    initContactForm();
-    
-    // Initialize skill bars animation
-    initSkillBars();
-    
-    // Initialize typing effect in terminal
-    initTerminalTyping();
+    initProfileImage();
+    initTypewriterEffect();
 });
 
-// Theme Toggle Functionality
-function initTheme() {
-    const themeToggle = document.getElementById('theme-toggle');
+// Theme Toggle
+function initThemeToggle() {
+    const themeToggle = document.querySelector('.theme-toggle');
     const themeIcon = themeToggle.querySelector('i');
     
-    // Check for saved theme or default to light
+    // Load saved theme or default to light
     const savedTheme = localStorage.getItem('theme') || 'light';
     setTheme(savedTheme);
     
-    themeToggle.addEventListener('click', function(e) {
-        e.preventDefault();
+    themeToggle.addEventListener('click', () => {
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
         setTheme(newTheme);
@@ -45,61 +33,42 @@ function initTheme() {
         // Update icon
         if (theme === 'dark') {
             themeIcon.className = 'fas fa-sun';
-            themeIcon.setAttribute('title', 'Switch to light theme');
         } else {
             themeIcon.className = 'fas fa-moon';
-            themeIcon.setAttribute('title', 'Switch to dark theme');
         }
     }
 }
 
-// Navigation Functionality
-function initNavigation() {
-    const navToggle = document.querySelector('.nav-toggle');
+// Mobile Menu
+function initMobileMenu() {
+    const menuToggle = document.querySelector('.menu-toggle');
     const navMenu = document.querySelector('.nav-menu');
     const navLinks = document.querySelectorAll('.nav-link');
     
-    // Toggle mobile menu
-    navToggle.addEventListener('click', function() {
-        navToggle.classList.toggle('active');
+    menuToggle.addEventListener('click', () => {
+        menuToggle.classList.toggle('active');
         navMenu.classList.toggle('active');
     });
     
-    // Close mobile menu when clicking a link
+    // Close menu when clicking a link
     navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            navToggle.classList.remove('active');
+        link.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
             navMenu.classList.remove('active');
         });
     });
     
-    // Change active nav link on scroll
-    window.addEventListener('scroll', function() {
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-link');
-        
-        let current = '';
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            
-            if (scrollY >= (sectionTop - 200)) {
-                current = section.getAttribute('id');
-            }
-        });
-        
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${current}`) {
-                link.classList.add('active');
-            }
-        });
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+            menuToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+        }
     });
 }
 
-// Smooth Scrolling
-function initSmoothScrolling() {
+// Smooth Scroll
+function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -118,86 +87,67 @@ function initSmoothScrolling() {
     });
 }
 
-// Back to Top Button
-function initBackToTop() {
-    const backToTopButton = document.getElementById('back-to-top');
-    
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 300) {
-            backToTopButton.classList.add('visible');
-        } else {
-            backToTopButton.classList.remove('visible');
-        }
-    });
-    
-    backToTopButton.addEventListener('click', function() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-}
-
-// Contact Form
-function initContactForm() {
-    const contactForm = document.getElementById('contact-form');
-    const formMessage = document.getElementById('form-message');
+// Contact Form Validation
+function initFormValidation() {
+    const contactForm = document.getElementById('contactForm');
+    const formMessage = document.getElementById('formMessage');
     
     if (!contactForm) return;
     
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Simple form validation
+        // Get form values
         const name = document.getElementById('name').value.trim();
         const email = document.getElementById('email').value.trim();
         const subject = document.getElementById('subject').value.trim();
         const message = document.getElementById('message').value.trim();
         
+        // Validation
         if (!name || !email || !subject || !message) {
-            showFormMessage('Please fill in all fields.', 'error');
+            showMessage('Please fill in all fields.', 'error');
             return;
         }
         
         if (!isValidEmail(email)) {
-            showFormMessage('Please enter a valid email address.', 'error');
+            showMessage('Please enter a valid email address.', 'error');
             return;
         }
         
-        // In a real application, you would send this data to a server
-        // For this demo, we'll just show a success message
-        showFormMessage('Thank you for your message! I will get back to you soon.', 'success');
-        contactForm.reset();
-        
         // Simulate form submission
+        showMessage('Thank you! Your message has been sent successfully.', 'success');
+        
+        // Reset form
         setTimeout(() => {
-            formMessage.classList.remove('success');
-            formMessage.textContent = '';
-        }, 5000);
+            contactForm.reset();
+            formMessage.style.display = 'none';
+        }, 3000);
     });
-    
-    function showFormMessage(text, type) {
-        formMessage.textContent = text;
-        formMessage.className = 'form-message ' + type;
-    }
     
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
+    
+    function showMessage(text, type) {
+        formMessage.textContent = text;
+        formMessage.className = `form-message ${type}`;
+        formMessage.style.display = 'block';
+    }
 }
 
-// Animate Skill Bars
-function initSkillBars() {
-    // Only animate skill bars when they come into view
-    const skillBars = document.querySelectorAll('.skill-level');
+// Skill Bar Animations
+function initSkillAnimations() {
+    const skillBars = document.querySelectorAll('.skill-progress');
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                // Skill bars already have inline width styles
-                // This is just to trigger the animation
-                entry.target.style.width = entry.target.style.width;
+                const width = entry.target.style.width;
+                entry.target.style.width = '0';
+                setTimeout(() => {
+                    entry.target.style.width = width;
+                }, 100);
             }
         });
     }, { threshold: 0.5 });
@@ -205,188 +155,128 @@ function initSkillBars() {
     skillBars.forEach(bar => observer.observe(bar));
 }
 
-// Terminal Typing Effect
-function initTerminalTyping() {
-    const terminalLines = document.querySelectorAll('.terminal-line');
+// Back to Top Button
+function initBackToTop() {
+    const backToTop = document.createElement('button');
+    backToTop.className = 'back-to-top';
+    backToTop.innerHTML = '<i class="fas fa-arrow-up"></i>';
+    backToTop.setAttribute('aria-label', 'Back to top');
+    document.body.appendChild(backToTop);
     
-    // Simple typewriter effect on page load
-    let delay = 0;
-    terminalLines.forEach((line, index) => {
-        // Skip the blinking cursor line
-        if (line.classList.contains('blink')) return;
-        
-        const originalText = line.textContent;
-        line.textContent = '';
-        
-        // Only apply typing effect to command lines (not outputs)
-        if (originalText.startsWith('>')) {
-            setTimeout(() => {
-                typeText(line, originalText, 0);
-            }, delay);
-            
-            delay += originalText.length * 30 + 500; // Add delay between lines
-        } else {
-            // For output lines, just show them after a delay
-            setTimeout(() => {
-                line.textContent = originalText;
-                line.style.opacity = '1';
-            }, delay);
-            
-            delay += 500;
-        }
-    });
-    
-    function typeText(element, text, index) {
-        if (index < text.length) {
-            element.textContent += text.charAt(index);
-            setTimeout(() => {
-                typeText(element, text, index + 1);
-            }, 30);
-        }
-    }
-}
-
-// Additional feature: Project filter by technology
-function createProjectFilter() {
-    // This would be an additional feature if you had more projects
-    // For now, we'll leave it as a placeholder for future enhancement
-    console.log('Project filter feature placeholder');
-}
-
-// Additional feature: Download resume button
-function createDownloadButton() {
-    const downloadButton = document.createElement('a');
-    downloadButton.href = '#';
-    downloadButton.className = 'btn btn-secondary';
-    downloadButton.innerHTML = '<i class="fas fa-download"></i> Download Resume';
-    
-    // Add to hero buttons
-    const heroButtons = document.querySelector('.hero-buttons');
-    if (heroButtons) {
-        heroButtons.appendChild(downloadButton);
-    }
-    
-    // In a real implementation, this would link to a PDF file
-    downloadButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        alert('Resume download would start here. In a real implementation, this would link to a PDF file.');
-    });
-}
-
-// Initialize additional features
-createDownloadButton();
-createProjectFilter();
-
-// Profile Picture Upload Functionality
-function initProfilePictureUpload() {
-    const profilePlaceholder = document.querySelector('.profile-placeholder');
-    const profilePicLarge = document.querySelector('.profile-pic-large');
-    
-    // Create upload button for profile picture
-    const uploadContainer = document.createElement('div');
-    uploadContainer.className = 'upload-profile-container';
-    uploadContainer.innerHTML = `
-        <label for="profile-upload" class="upload-btn">
-            <i class="fas fa-camera"></i> Upload Profile Picture
-        </label>
-        <input type="file" id="profile-upload" accept="image/*">
+    // Style the button
+    backToTop.style.cssText = `
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.25rem;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     `;
     
-    // Add to hero section
-    const heroContent = document.querySelector('.hero-content');
-    heroContent.appendChild(uploadContainer);
-    
-    const uploadInput = document.getElementById('profile-upload');
-    
-    uploadInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            
-            reader.onload = function(event) {
-                const imageUrl = event.target.result;
-                
-                // Update hero profile picture
-                profilePlaceholder.innerHTML = '';
-                const img = document.createElement('img');
-                img.src = imageUrl;
-                img.alt = 'Teofilus Hezron Blaun Profile Picture';
-                profilePlaceholder.appendChild(img);
-                
-                // Update about section profile picture
-                if (profilePicLarge) {
-                    profilePicLarge.innerHTML = '';
-                    const imgLarge = document.createElement('img');
-                    imgLarge.src = imageUrl;
-                    imgLarge.alt = 'Teofilus Hezron Blaun Profile Picture';
-                    profilePicLarge.appendChild(imgLarge);
-                }
-                
-                // Store in localStorage for persistence
-                localStorage.setItem('profilePicture', imageUrl);
-            };
-            
-            reader.readAsDataURL(file);
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTop.style.opacity = '1';
+            backToTop.style.visibility = 'visible';
+        } else {
+            backToTop.style.opacity = '0';
+            backToTop.style.visibility = 'hidden';
         }
     });
     
-    // Check if profile picture exists in localStorage
-    const savedProfilePic = localStorage.getItem('profilePicture');
-    if (savedProfilePic) {
-        profilePlaceholder.innerHTML = '';
-        const img = document.createElement('img');
-        img.src = savedProfilePic;
-        img.alt = 'Teofilus Hezron Blaun Profile Picture';
-        profilePlaceholder.appendChild(img);
-        
-        if (profilePicLarge) {
-            profilePicLarge.innerHTML = '';
-            const imgLarge = document.createElement('img');
-            imgLarge.src = savedProfilePic;
-            imgLarge.alt = 'Teofilus Hezron Blaun Profile Picture';
-            profilePicLarge.appendChild(imgLarge);
-        }
-    }
+    backToTop.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
 }
 
-// Update the DOMContentLoaded event listener to include the new function
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all existing features
-    initTheme();
-    initNavigation();
-    initSmoothScrolling();
-    initBackToTop();
-    initContactForm();
-    initSkillBars();
-    createDownloadButton();
-    createProjectFilter();
+// Profile Image Handling
+function initProfileImage() {
+    const profileImg = document.getElementById('profile-image');
     
-    // Add new profile picture functionality
-    initProfilePictureUpload();
-    
-    // Initialize typing effect for hero description
-    initTypewriterEffect();
-});
+    // Fallback if image doesn't load
+    profileImg.onerror = function() {
+        this.style.display = 'none';
+        const placeholder = document.createElement('div');
+        placeholder.className = 'profile-placeholder';
+        placeholder.innerHTML = '<i class="fas fa-user"></i>';
+        this.parentNode.appendChild(placeholder);
+    };
+}
 
-// Add typewriter effect for hero description
+// Typewriter Effect for Hero Text
 function initTypewriterEffect() {
-    const typewriterText = document.querySelector('.typewriter-text');
-    if (!typewriterText) return;
+    const heroText = document.querySelector('.hero-text');
+    if (!heroText) return;
     
-    const text = typewriterText.textContent;
-    typewriterText.textContent = '';
+    const originalText = heroText.textContent;
+    heroText.textContent = '';
     
     let i = 0;
+    const speed = 30; // typing speed in ms
+    
     function typeWriter() {
-        if (i < text.length) {
-            typewriterText.textContent += text.charAt(i);
+        if (i < originalText.length) {
+            heroText.textContent += originalText.charAt(i);
             i++;
-            setTimeout(typeWriter, 30);
+            setTimeout(typeWriter, speed);
         }
     }
     
-    // Start typing after a short delay
+    // Start typing after a delay
     setTimeout(typeWriter, 500);
 }
 
+// Active Navigation Highlight
+function initActiveNav() {
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    window.addEventListener('scroll', () => {
+        let current = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            
+            if (scrollY >= (sectionTop - 100)) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    });
+}
 
+// Initialize active navigation
+initActiveNav();
+
+// Download Resume Button
+function initDownloadResume() {
+    const downloadBtn = document.querySelector('a[href="#contact"]');
+    downloadBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('In a real implementation, this would download a PDF resume. For now, please contact via email.');
+    });
+}
+
+// Initialize download functionality
+initDownloadResume();
