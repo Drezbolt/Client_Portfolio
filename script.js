@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initBackToTop();
     initProfileImage();
     initTypewriterEffect();
+    initActiveNav();
+    initDownloadResume();
 });
 
 // Theme Toggle
@@ -211,8 +213,18 @@ function initProfileImage() {
     profileImg.onerror = function() {
         this.style.display = 'none';
         const placeholder = document.createElement('div');
-        placeholder.className = 'profile-placeholder';
-        placeholder.innerHTML = '<i class="fas fa-user"></i>';
+        placeholder.className = 'profile-placeholder-square';
+        placeholder.innerHTML = '<i class="fas fa-user-tie"></i>';
+        placeholder.style.cssText = `
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 5rem;
+        `;
         this.parentNode.appendChild(placeholder);
     };
 }
@@ -266,17 +278,13 @@ function initActiveNav() {
     });
 }
 
-// Initialize active navigation
-initActiveNav();
-
 // Download Resume Button
 function initDownloadResume() {
     const downloadBtn = document.querySelector('a[href="#contact"]');
+    if (!downloadBtn) return;
+    
     downloadBtn.addEventListener('click', function(e) {
         e.preventDefault();
         alert('In a real implementation, this would download a PDF resume. For now, please contact via email.');
     });
 }
-
-// Initialize download functionality
-initDownloadResume();
