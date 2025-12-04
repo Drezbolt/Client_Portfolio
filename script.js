@@ -276,3 +276,117 @@ function createDownloadButton() {
 // Initialize additional features
 createDownloadButton();
 createProjectFilter();
+
+// Profile Picture Upload Functionality
+function initProfilePictureUpload() {
+    const profilePlaceholder = document.querySelector('.profile-placeholder');
+    const profilePicLarge = document.querySelector('.profile-pic-large');
+    
+    // Create upload button for profile picture
+    const uploadContainer = document.createElement('div');
+    uploadContainer.className = 'upload-profile-container';
+    uploadContainer.innerHTML = `
+        <label for="profile-upload" class="upload-btn">
+            <i class="fas fa-camera"></i> Upload Profile Picture
+        </label>
+        <input type="file" id="profile-upload" accept="image/*">
+    `;
+    
+    // Add to hero section
+    const heroContent = document.querySelector('.hero-content');
+    heroContent.appendChild(uploadContainer);
+    
+    const uploadInput = document.getElementById('profile-upload');
+    
+    uploadInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                const imageUrl = event.target.result;
+                
+                // Update hero profile picture
+                profilePlaceholder.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = 'Teofilus Hezron Blaun Profile Picture';
+                profilePlaceholder.appendChild(img);
+                
+                // Update about section profile picture
+                if (profilePicLarge) {
+                    profilePicLarge.innerHTML = '';
+                    const imgLarge = document.createElement('img');
+                    imgLarge.src = imageUrl;
+                    imgLarge.alt = 'Teofilus Hezron Blaun Profile Picture';
+                    profilePicLarge.appendChild(imgLarge);
+                }
+                
+                // Store in localStorage for persistence
+                localStorage.setItem('profilePicture', imageUrl);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Check if profile picture exists in localStorage
+    const savedProfilePic = localStorage.getItem('profilePicture');
+    if (savedProfilePic) {
+        profilePlaceholder.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = savedProfilePic;
+        img.alt = 'Teofilus Hezron Blaun Profile Picture';
+        profilePlaceholder.appendChild(img);
+        
+        if (profilePicLarge) {
+            profilePicLarge.innerHTML = '';
+            const imgLarge = document.createElement('img');
+            imgLarge.src = savedProfilePic;
+            imgLarge.alt = 'Teofilus Hezron Blaun Profile Picture';
+            profilePicLarge.appendChild(imgLarge);
+        }
+    }
+}
+
+// Update the DOMContentLoaded event listener to include the new function
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all existing features
+    initTheme();
+    initNavigation();
+    initSmoothScrolling();
+    initBackToTop();
+    initContactForm();
+    initSkillBars();
+    createDownloadButton();
+    createProjectFilter();
+    
+    // Add new profile picture functionality
+    initProfilePictureUpload();
+    
+    // Initialize typing effect for hero description
+    initTypewriterEffect();
+});
+
+// Add typewriter effect for hero description
+function initTypewriterEffect() {
+    const typewriterText = document.querySelector('.typewriter-text');
+    if (!typewriterText) return;
+    
+    const text = typewriterText.textContent;
+    typewriterText.textContent = '';
+    
+    let i = 0;
+    function typeWriter() {
+        if (i < text.length) {
+            typewriterText.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 30);
+        }
+    }
+    
+    // Start typing after a short delay
+    setTimeout(typeWriter, 500);
+}
+
+
